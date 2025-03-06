@@ -6,20 +6,27 @@ backend/.venv/
 backend/.mypy_cache/
 backend/.pytest_cache/
 backend/.vscode/
+backend/.DS_Store
+backend/alembic/versions/*.pyc
 
-# Node
+# Node.js / Vite
 frontend/node_modules/
 frontend/.env
 frontend/.vite/
 frontend/dist/
 frontend/.DS_Store
 
-# Alembic
-backend/alembic/versions/*.pyc
-
-# General
+# Logs
 *.log
-*.sqlite3
+
+# System
 .DS_Store
-__pycache__/
-.env
+Thumbs.db
+
+# SQLite (if used temporarily)
+*.sqlite3
+
+# Test coverage
+htmlcov/
+.coverage
+coverage.xml
