@@ -8,6 +8,7 @@ from app.db.models import User
 from app.schemas.user import UserCreate, UserUpdate
 from app.utils.security import hash_password
 
+
 def create_user(db: Session, user: UserCreate) -> User:
     """
     Create a new user in the database.
@@ -16,7 +17,8 @@ def create_user(db: Session, user: UserCreate) -> User:
     db_user = User(
         name=user.name.strip(),
         email=user.email.strip().lower(),
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        role=user.role.strip().lower() if user.role else "user"  # Handle role
     )
     db.add(db_user)
     db.commit()
@@ -50,11 +52,13 @@ def update_user(db: Session, db_user: User, updates: UserUpdate) -> User:
     Update an existing user's details.
     """
     if updates.name:
-        db_user.name = updates.name
+        db_user.name = updates.name.strip()
     if updates.email:
-        db_user.email = updates.email
+        db_user.email = updates.email.strip().lower()
     if updates.password:
         db_user.hashed_password = hash_password(updates.password)
+    if updates.role:
+        db_user.role = updates.role.strip().lower()
 
     db.commit()
     db.refresh(db_user)

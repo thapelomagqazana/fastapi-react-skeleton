@@ -17,14 +17,14 @@ if DATABASE_URL is None:
     raise ValueError("DATABASE_URL is not set in the environment variables.")
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
-# ✅ Logging
+# Logging
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# ✅ Import models here
+# Import models here
 from app.db.models import Base
 
-# ✅ Target metadata for 'autogenerate'
+# Target metadata for 'autogenerate'
 target_metadata = Base.metadata
 
 
