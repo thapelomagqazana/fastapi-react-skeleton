@@ -2,7 +2,7 @@
 User API endpoints.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -25,7 +25,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=List[UserOut])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_users(skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=10000), 
+    db: Session = Depends(get_db)):
     """
     Get a list of all users.
     """

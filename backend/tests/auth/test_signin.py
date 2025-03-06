@@ -172,7 +172,6 @@ def test_signin_min_email_length(test_client, create_test_user, cleanup_user):
 
 
 # 🟡 Corner Test Cases
-
 def test_signin_email_mixed_cases_spaces(test_client, create_test_user, cleanup_user):
     create_test_user("Mixed Email", "user@email.com", "password")
     payload = {"email": "  User@Email.Com  ", "password": "password"}
