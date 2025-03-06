@@ -23,7 +23,9 @@ class UserOut(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True  # Tells Pydantic to convert ORM objects to JSON
+        model_config = {
+            "from_attributes": True
+        } # Tells Pydantic to convert ORM objects to JSON
 
 
 # Schema for updating an existing user

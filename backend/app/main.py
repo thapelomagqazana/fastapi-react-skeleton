@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .api.endpoints import health
+from .api.endpoints import auth
 # from .db.models import Base
 from .db.session import engine
 
@@ -9,6 +9,6 @@ from .db.session import engine
 app = FastAPI()
 
 # Routers
-app.include_router(health.router)
+app.include_router(auth.router)
 # app.include_router(users.router, prefix="/api/users", tags=["users"])
 # app.include_router(auth.router, prefix="/auth", tags=["auth"])
