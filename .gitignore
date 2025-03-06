@@ -1,0 +1,25 @@
+# Python
+backend/env/
+backend/__pycache__/
+backend/.env
+backend/.venv/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.vscode/
+
+# Node
+frontend/node_modules/
+frontend/.env
+frontend/.vite/
+frontend/dist/
+frontend/.DS_Store
+
+# Alembic
+backend/alembic/versions/*.pyc
+
+# General
+*.log
+*.sqlite3
+.DS_Store
+__pycache__/
+.env
