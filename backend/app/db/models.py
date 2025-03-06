@@ -5,11 +5,12 @@ SQLAlchemy ORM models.
 from sqlalchemy import Column, Integer, String, DateTime, func
 from sqlalchemy.ext.declarative import declarative_base
 
+# Base class for all models
 Base = declarative_base()
 
 class User(Base):
     """
-    User table with basic fields.
+    User model representing registered users.
     """
     __tablename__ = "users"
 
@@ -17,5 +18,5 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
