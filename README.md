@@ -1,118 +1,183 @@
-# FastAPI + React (Vite, TypeScript) + PostgreSQL Skeleton
-
-A **full-stack starter boilerplate** designed to accelerate development with **FastAPI**, **React (Vite + TypeScript)**, and **PostgreSQL**, featuring built-in **JWT Authentication**, **User CRUD**, **Alembic migrations**, and **Dockerized deployment**.
-
-This skeleton serves as a reusable foundation to kickstart scalable and secure web applications with clear modularity and best practices.
 
 ---
 
-## 🚀 Tech Stack
+# **FastAPI + React (Vite + TypeScript) + PostgreSQL/MongoDB Skeleton**
+🚀 **Full-stack FastAPI + React Vite + PostgreSQL/MongoDB skeleton** that follows best practices for backend & frontend development.
 
-| Layer        | Technology                  |
-|--------------|-----------------------------|
-| Backend     | FastAPI, SQLAlchemy, Alembic, JWT (python-jose), Passlib |
-| Frontend    | React, Vite, TypeScript, Axios, React Router |
-| Database    | PostgreSQL                  |
-| DevOps      | Docker, Docker Compose      |
-| Auth        | JWT-based Authentication    |
-
----
-
-## 🎯 Project Goals
-
-✅ Provide a reusable and extendable full-stack boilerplate.  
-✅ Implement common features used in modern web applications:  
-   - User registration (Sign Up).  
-   - Authentication (Sign In/Sign Out) with JWT.  
-   - Protected and authorized routes.  
-   - User CRUD operations (Create, Read, Update, Delete).  
-✅ Build a modular and scalable backend architecture.  
-✅ Deliver a responsive and type-safe frontend with Vite + React.  
-✅ Offer out-of-the-box Docker support for easy setup and deployment.  
-✅ Auto-manage database migrations using Alembic.  
-✅ Seed initial data automatically.  
+## **📌 Features**
+✅ **FastAPI Backend** with JWT authentication & user CRUD  
+✅ **React Frontend** (Vite + TypeScript)  
+✅ **Repository Pattern** (Supports SQL & NoSQL)  
+✅ **PostgreSQL or MongoDB** (Switch via env variables)  
+✅ **Dockerized** for easy deployment  
+✅ **Automated Testing** with `pytest`  
+✅ **Swagger API Docs** (`/docs`)  
+✅ **CORS Configured**  
 
 ---
 
-## 📁 Project Structure
-
+## **📂 Project Structure**
 ```
-fastapi-react-skeleton/
-├── backend/
-│   ├── app/              # FastAPI app (API, DB, Core)
-│   ├── alembic/          # Alembic migrations
-│   ├── Dockerfile        # Backend Dockerfile
-├── frontend/
-│   ├── src/              # React + TypeScript app
-│   ├── Dockerfile        # (Optional) Frontend Dockerfile
-├── docker-compose.yml    # Docker Compose for full-stack
-├── README.md             # Project documentation
+.
+├── backend/                     # FastAPI backend
+│   ├── app/
+│   │   ├── api/endpoints        # API routes
+│   │   ├── core                 # Configurations
+│   │   ├── db                   # Database setup
+│   │   ├── models               # Database models
+│   │   ├── repositories         # Repository pattern (SQL & NoSQL)
+│   │   ├── schemas              # Pydantic Schemas
+│   │   ├── tests                # Pytest test cases
+│   │   ├── deps.py              # Dependency injection
+│   │   ├── main.py              # FastAPI entry point
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── .env
+├── frontend/                    # React Vite frontend
+│   ├── src/                     # Frontend source
+│   ├── public/                  # Static assets
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── vite.config.ts
+├── docker-compose.yml            # Docker Compose for Backend + Frontend + DB
+├── README.md
 ```
 
 ---
 
-## 🏗️ Features
-
-✅ **Backend (FastAPI)**:
-- JWT Authentication.
-- User CRUD APIs.
-- Auth-protected routes.
-- Alembic migrations.
-- PostgreSQL integration.
-- Dockerized service.
-
-✅ **Frontend (React + Vite + TypeScript)**:
-- JWT token storage.
-- Protected frontend routes.
-- Login, Profile, and Home pages.
-- API integration with Axios.
-
-✅ **Infrastructure**:
-- Multi-container Docker setup.
-- PostgreSQL database.
-- Seeding initial data on startup.
-
----
-
-## 🛠️ Getting Started
-
-### 1️⃣ Clone the repo:
+## **🚀 Getting Started**
+### **1️⃣ Clone the Repository**
 ```bash
-git clone https://github.com/your-username/fastapi-react-skeleton.git
+git clone https://github.com/thapelomagqazana/fastapi-react-skeleton.git
 cd fastapi-react-skeleton
 ```
 
-### 2️⃣ Configure environment variables
-Create `.env` files in both `backend/` and `frontend/`.
+---
 
-### 3️⃣ Run with Docker Compose:
+### **2️⃣ Setup Environment Variables**
+Create a `.env` file inside `backend/` with:
+```env
+# Database Configuration
+DB_TYPE=sql   # Change to 'nosql' for MongoDB
+SQL_URL=postgresql+psycopg2://skeleton_user:skeleton_pass@localhost:5432/skeleton_db
+MONGODB_URL=mongodb://mongodb:27017
+MONGODB_NAME=fastapi_db
+
+# JWT Authentication
+JWT_SECRET_KEY=your-secret-key
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# CORS Config
+BACKEND_CORS_ORIGINS=http://localhost:5173
+```
+
+For **frontend**, create `frontend/.env`:
+```env
+VITE_PORT=3000
+VITE_API_URL=http://localhost:8000
+```
+
+---
+
+### **3️⃣ Run with Docker**
 ```bash
 docker-compose up --build
 ```
-
-### 4️⃣ Access:
-- Backend: `http://localhost:8000`
-- Frontend: `http://localhost:5173`
-
----
-
-## 📌 Planned Improvements
-- [ ] Add user roles (admin/user).
-- [ ] Refresh token support.
-- [ ] Email verification on sign-up.
-- [ ] CI/CD pipeline with GitHub Actions.
-- [ ] Production-ready Docker optimization.
+This starts:
+- **FastAPI backend** at `http://localhost:8000`
+- **React frontend** at `http://localhost:3000`
+- **PostgreSQL** or **MongoDB** (based on `DB_TYPE`)
 
 ---
 
-## 🤝 Contributing
+## **📡 API Endpoints**
+Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-Contributions are welcome! Feel free to fork the project and submit pull requests.
+| Method | Endpoint                 | Description               |
+|--------|--------------------------|---------------------------|
+| `POST` | `/auth/signin`           | Sign in                   |
+| `POST` | `/auth/signout`          | Sign out                  |
+| `POST` | `/api/users`             | Create user               |
+| `GET`  | `/api/users`             | Get all users             |
+| `GET`  | `/api/users/{user_id}`   | Get user by ID            |
+| `PUT`  | `/api/users/{user_id}`   | Update user               |
+| `DELETE` | `/api/users/{user_id}` | Delete user               |
 
 ---
 
-## 📝 License
+## **🛠 Running Servers**
+### **📌 Run FastAPI**
+1. Setup and install
+```bash
+cd backend
+python3 venv env
+source env/bin/activate
+pip install -r requirements.txt
+```
 
-This project is open-source under the [MIT License](LICENSE).
+2. Run server
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+or manually:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### **📌 Run React**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## **🛠 Running Tests**
+1. Start the backend server first
+```bash
+cd backend
+pytest tests 
+```
 
 ---
+
+## **🌍 Deployment**
+### **📌 Deploy with Docker**
+```bash
+docker-compose -f docker-compose.prod.yml up --build
+```
+
+---
+
+## **📌 Switching Between SQL & NoSQL**
+Modify `.env`:
+```env
+DB_TYPE=sql   # Use 'nosql' for MongoDB
+```
+
+---
+
+## **👨‍💻 Contributing**
+1. Fork this repository  
+2. Create a new branch (`git checkout -b feature-name`)  
+3. Commit changes (`git commit -m "Added feature XYZ"`)  
+4. Push to the branch (`git push origin feature-name`)  
+5. Open a pull request  
+
+---
+
+## **💡 Next Steps**
+🔹 Add **Redis** for caching  
+🔹 Implement **Role-Based Access Control (RBAC)**
+
+---
+
+## **📜 License**
+This project is licensed under the **MIT License**.
+
+---
+
+🚀 **Happy Coding!** 🎯

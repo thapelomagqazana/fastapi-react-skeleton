@@ -1,7 +1,9 @@
 from fastapi import FastAPI
-from .api.endpoints import auth, users
-from .db.models import Base
-from .db.session import engine
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.endpoints import auth, users
+from app.db.models import Base
+from app.db.session import engine
+from app.core.config import settings
 
 # Create tables (optional during development)
 Base.metadata.create_all(bind=engine)
@@ -40,6 +42,15 @@ app = FastAPI(
         "name": "MIT License",
         "url": "https://opensource.org/licenses/MIT",
     }
+)
+
+# Enable CORS (Allow frontend requests)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.BACKEND_CORS_ORIGINS],  # Allow React frontend
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
 )
 
 # Routers

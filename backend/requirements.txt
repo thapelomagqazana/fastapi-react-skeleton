@@ -14,3 +14,4 @@ uuid
 motor
 pymongo
 pydantic-settings
+fastapi[all]

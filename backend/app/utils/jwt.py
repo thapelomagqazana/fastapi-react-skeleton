@@ -1,15 +1,9 @@
 """
 JWT utilities for token creation and verification.
 """
-
-import os
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-
-# Environment variables
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
-JWT_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES"))
+from app.core.config import settings
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
@@ -17,9 +11,9 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     Generate a JWT token with timezone-aware expiration.
     """
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=JWT_EXPIRE_MINUTES))
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire.timestamp()})  # Store as a timestamp
+    return jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
 def verify_access_token(token: str) -> dict:
@@ -27,7 +21,7 @@ def verify_access_token(token: str) -> dict:
     Verify a JWT token and return the payload.
     """
     try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         return payload
     except JWTError:
         raise ValueError("Invalid token")

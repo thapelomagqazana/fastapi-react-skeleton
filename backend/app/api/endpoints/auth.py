@@ -4,9 +4,11 @@ from app.repositories.base import BaseRepository
 from app.deps import get_user_repository, get_current_user
 from app.utils.security import verify_password
 from app.utils.jwt import create_access_token
+from app.core.config import settings
 from app.schemas.auth import SignInRequest, TokenResponse
 from app.db.models import User
 from app.core.logging import logger
+from datetime import timedelta
 
 
 def get_request_metadata(request: Request):
@@ -41,7 +43,8 @@ def signin(
     if not db_user or not verify_password(credentials.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    access_token = create_access_token({"user_id": db_user.id})
+    expires_in = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)  # Define token expiry duration
+    access_token = create_access_token({"user_id": db_user.id, "role": db_user.role}, expires_in)
     logger.info(f"[{request_id}] User {client_ip} signed in: {credentials.email.lower()}")
     return {"access_token": access_token}
 
