@@ -1,10 +1,9 @@
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path, Request
-from sqlalchemy.orm import Session
 from typing import List
 
-from app.deps import get_current_user, get_db
-from app.crud import user as user_crud
+from app.repositories.base import BaseRepository
+from app.deps import get_user_repository, get_current_user
 from app.schemas.user import UserCreate, UserOut, UserUpdate
 from app.db.models import User
 from app.core.logging import logger
@@ -33,19 +32,19 @@ router = APIRouter()
 )
 def create_user(
     user: UserCreate, 
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     request: Request = None
 ):
     client_ip, request_id = get_request_metadata(request)
 
-    existing_user = user_crud.get_user_by_email(db, user.email.lower())
+    existing_user = user_repo.get_by_email(user.email.lower())
     if existing_user:
         logger.warning(
             f"[{request_id}] Duplicate email registration attempt from {client_ip}: {user.email}"
         )
         raise HTTPException(status_code=400, detail="Email already registered.")
     
-    new_user = user_crud.create_user(db, user)
+    new_user = user_repo.create(user.dict())
     logger.info(
         f"[{request_id}] User created from {client_ip} with ID {new_user.id} and email {new_user.email}"
     )
@@ -65,12 +64,12 @@ def create_user(
 def read_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=10000), 
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     request: Request = None
 ):
     client_ip, request_id = get_request_metadata(request)
 
-    users = user_crud.get_users(db, skip=skip, limit=limit)
+    users = user_repo.get_all(skip=skip, limit=limit)
     logger.info(f"[{request_id}] {len(users)} users fetched by {client_ip}.")
     return users
 
@@ -87,13 +86,13 @@ def read_users(
 )
 def read_user(
     user_id: int = Path(..., gt=0),
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     current_user_id: int = Depends(get_current_user),
     request: Request = None
 ):
     client_ip, request_id = get_request_metadata(request)
 
-    db_user = user_crud.get_user(db, user_id)
+    db_user = user_repo.get_by_id(user_id)
     if not db_user:
         logger.warning(f"[{request_id}] User ID {user_id} not found. Request from {client_ip}.")
         raise HTTPException(status_code=404, detail="User not found.")
@@ -116,13 +115,13 @@ def read_user(
 def update_user(
     user_id: int,
     updates: UserUpdate,
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     current_user: User = Depends(get_current_user),
     request: Request = None
 ):
     client_ip, request_id = get_request_metadata(request)
 
-    db_user = user_crud.get_user(db, user_id)
+    db_user = user_repo.get_by_id(user_id)
     if not db_user:
         logger.warning(f"[{request_id}] Attempted update on non-existent user ID {user_id} from {client_ip}.")
         raise HTTPException(status_code=404, detail="User not found.")
@@ -133,7 +132,7 @@ def update_user(
         )
         raise HTTPException(status_code=403, detail="Unauthorized to update this user.")
 
-    updated_user = user_crud.update_user(db, db_user, updates)
+    updated_user = user_repo.update(user_id, updates.dict(exclude_unset=True))
     logger.info(f"[{request_id}] User ID {user_id} updated successfully by {client_ip}.")
     return updated_user
 
@@ -151,13 +150,13 @@ def update_user(
 )
 def delete_user(
     user_id: int,
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     current_user: User = Depends(get_current_user),
     request: Request = None
 ):
     client_ip, request_id = get_request_metadata(request)
 
-    db_user = user_crud.get_user(db, user_id)
+    db_user = user_repo.get_by_id(user_id)
     if not db_user:
         logger.warning(f"[{request_id}] Attempted deletion of non-existent user ID {user_id} from {client_ip}.")
         raise HTTPException(status_code=404, detail="User not found.")
@@ -168,5 +167,5 @@ def delete_user(
         )
         raise HTTPException(status_code=403, detail="Unauthorized to delete this user.")
 
-    user_crud.delete_user(db, db_user)
+    user_repo.delete(user_id)
     logger.info(f"[{request_id}] User ID {user_id} deleted successfully by {client_ip}.")

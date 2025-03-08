@@ -5,13 +5,10 @@ Database connection handler using SQLAlchemy and PostgreSQL.
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
+from app.core.config import settings
 
 # Get the database URL from the environment
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = settings.SQL_URL
 
 # Validate that DATABASE_URL exists
 if not DATABASE_URL:

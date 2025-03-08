@@ -11,3 +11,6 @@ pytest
 httpx
 pytest-asyncio
 uuid
+motor
+pymongo
+pydantic-settings

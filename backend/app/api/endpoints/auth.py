@@ -1,8 +1,7 @@
 import uuid
 from fastapi import APIRouter, HTTPException, Depends, status, Request
-from sqlalchemy.orm import Session
-from app.deps import get_db, get_current_user
-from app.crud import user as user_crud
+from app.repositories.base import BaseRepository
+from app.deps import get_user_repository, get_current_user
 from app.utils.security import verify_password
 from app.utils.jwt import create_access_token
 from app.schemas.auth import SignInRequest, TokenResponse
@@ -33,12 +32,12 @@ router = APIRouter()
 )
 def signin(
     credentials: SignInRequest, 
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     request: Request = None
 ):
     client_ip, request_id = get_request_metadata(request)
 
-    db_user = user_crud.get_user_by_email(db, credentials.email.strip().lower())
+    db_user = user_repo.get_by_email(credentials.email.lower())
     if not db_user or not verify_password(credentials.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
@@ -58,7 +57,7 @@ def signin(
     }
 )
 def signout(
-    db: Session = Depends(get_db),
+    user_repo: BaseRepository = Depends(get_user_repository),
     current_user: User = Depends(get_current_user),
     request: Request = None
 ):
