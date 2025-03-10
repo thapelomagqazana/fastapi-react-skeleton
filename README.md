@@ -69,7 +69,7 @@ JWT_ALGORITHM=HS256
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # CORS Config
-BACKEND_CORS_ORIGINS=http://localhost:5173
+BACKEND_CORS_ORIGINS=http://localhost:3000
 ```
 
 For **frontend**, create `frontend/.env`:
