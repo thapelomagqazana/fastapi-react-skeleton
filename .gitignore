@@ -9,6 +9,10 @@ backend/**/.pytest_cache/
 backend/.vscode/
 backend/.DS_Store
 backend/alembic/versions/*.pyc
+# Ignore database files (for local SQLite, if used)
+backend/*.db
+backend/instance/
+backend/migrations/versions/*.pyc  # Ignore compiled migration scripts only
 
 # Node.js / Vite
 frontend/node_modules/

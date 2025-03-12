@@ -12,9 +12,9 @@ load_dotenv()
 config = context.config
 
 # Load .env DATABASE_URL dynamically
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("SQL_URL")
 if DATABASE_URL is None:
-    raise ValueError("DATABASE_URL is not set in the environment variables.")
+    raise ValueError("SQL_URL is not set in the environment variables.")
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Logging
